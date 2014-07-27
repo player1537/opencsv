@@ -31,8 +31,6 @@ public class CsvToBean<T> {
     private PropertyEditorContainer propertyEditorManager = new PropertyEditorContainer();
 
     public CsvToBean() {
-        propertyEditorManager.put(int.class, new PrimitiveIntegerEditor());
-        propertyEditorManager.put(Integer.class, new IntegerEditor());
     }
 
     public List<T> parse(MappingStrategy<T> mapper, Reader reader) {

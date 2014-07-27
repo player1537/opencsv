@@ -39,9 +39,6 @@ public class BeanToCsv<T> {
     private PropertyEditorContainer propertyEditorManager = new PropertyEditorContainer();
 
     public BeanToCsv() {
-        propertyEditorManager.put(int.class, new PrimitiveIntegerEditor());
-        propertyEditorManager.put(Integer.class, new IntegerEditor());
-        propertyEditorManager.put(String.class, new StringEditor());
     }
 
     public boolean write(MappingStrategy<T> mapper, Writer writer,
