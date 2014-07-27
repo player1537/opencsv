@@ -22,21 +22,17 @@ import au.com.bytecode.opencsv.editors.*;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.beans.PropertyEditor;
-import java.beans.PropertyEditorManager;
 import java.io.Reader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class CsvToBean<T> {
-    private Map<Class<?>, PropertyEditor> editorMap = null;
+    private PropertyEditorContainer propertyEditorManager = new PropertyEditorContainer();
 
     public CsvToBean() {
-        editorMap = new HashMap<Class<?>, PropertyEditor>();
-        addEditorToMap(int.class, new PrimitiveIntegerEditor());
-        addEditorToMap(Integer.class, new IntegerEditor());
+        propertyEditorManager.put(int.class, new PrimitiveIntegerEditor());
+        propertyEditorManager.put(Integer.class, new IntegerEditor());
     }
 
     public List<T> parse(MappingStrategy<T> mapper, Reader reader) {
@@ -80,7 +76,7 @@ public class CsvToBean<T> {
     }
 
     protected Object convertValue(String value, PropertyDescriptor prop) throws InstantiationException, IllegalAccessException {
-        PropertyEditor editor = getPropertyEditor(prop);
+        PropertyEditor editor = propertyEditorManager.get(prop);
         Object obj = value;
         if (null != editor) {
             editor.setAsText(value);
@@ -89,31 +85,7 @@ public class CsvToBean<T> {
         return obj;
     }
 
-    private PropertyEditor getPropertyEditorValue(Class<?> cls) {
-        PropertyEditor editor = editorMap.get(cls);
-
-        if (editor == null) {
-            editor = PropertyEditorManager.findEditor(cls);
-            addEditorToMap(cls, editor);
-        }
-
-        return editor;
+    public void putPropertyEditor(Class<?> cls, PropertyEditor editor) {
+        propertyEditorManager.put(cls, editor);
     }
-
-    public void addEditorToMap(Class<?> cls, PropertyEditor editor) {
-        if (editor != null) {
-            editorMap.put(cls, editor);
-        }
-    }
-
-
-    /*
-     * Attempt to find custom property editor on descriptor first, else try the propery editor manager.
-     */
-    protected PropertyEditor getPropertyEditor(PropertyDescriptor desc) throws InstantiationException, IllegalAccessException {
-        Class<?> cls = desc.getPropertyEditorClass();
-        if (null != cls) return (PropertyEditor) cls.newInstance();
-        return getPropertyEditorValue(desc.getPropertyType());
-    }
-
 }
