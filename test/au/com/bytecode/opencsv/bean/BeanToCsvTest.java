@@ -11,6 +11,7 @@ import java.beans.PropertyDescriptor;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.*;
@@ -211,4 +212,34 @@ public class BeanToCsvTest {
                         + "\"\"" + "\n"
         ));
     }
+
+    @Test
+    public void testWriteDate() throws IOException {
+        ColumnPositionMappingStrategy<MockBean> strat = new ColumnPositionMappingStrategy<MockBean>();
+        strat.setType(MockBean.class);
+        String[] columns = new String[]{"date"};
+        strat.setColumnMapping(columns);
+
+        StringWriter sw = new StringWriter();
+
+        List<MockBean> list = new ArrayList<MockBean>();
+        list.add(new MockBean());
+        list.add(new MockBean());
+
+        list.get(0).setDate(new Date(2014-1900,1-1,1));
+        list.get(1).setDate(null);
+
+        assertThat(list.size(), is(2));
+
+        bean.putPropertyEditor(Date.class, new MyDateEditor("yyyy-MM-dd"));
+
+        boolean value = bean.write(strat, sw, list);
+
+        assertThat(value, is(true));
+
+        assertThat(sw.getBuffer().toString(), is("\"date\"" + "\n"
+                        + "\"2014-01-01\"" + "\n"
+                        + "\"\"" + "\n"
+        ));
+   }
 }

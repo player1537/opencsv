@@ -1,5 +1,7 @@
 package au.com.bytecode.opencsv.bean;
 
+import java.util.Date;
+
 /**
  Copyright 2007 Kyle Miller.
 
@@ -22,6 +24,7 @@ package au.com.bytecode.opencsv.bean;
         private String orderNumber;
         private int num;
         private Integer nullableNum;
+        private Date date;
         public String getId() {
             return id;
         }
@@ -51,5 +54,11 @@ package au.com.bytecode.opencsv.bean;
         }
         public void setNullableNum(Integer nullableNum) {
             this.nullableNum = nullableNum;
+        }
+        public Date getDate() {
+            return date;
+        }
+        public void setDate(Date date) {
+            this.date = date;
         }
 }

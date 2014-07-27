@@ -7,6 +7,7 @@ import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.Date;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.*;
@@ -106,5 +107,28 @@ public class CsvToBeanTest {
         assertThat(list.get(0).getNullableNum(), is(0));
         assertThat(list.get(1).getNullableNum(), is(-1));
         assertThat(list.get(2).getNullableNum(), is(nullValue()));
+    }
+
+    @Test
+    public void testDate() {
+        String s = "" +
+                "\"2014-1-1\"\n" +
+                "\"\"\n";
+
+        ColumnPositionMappingStrategy<MockBean> strat = new ColumnPositionMappingStrategy<MockBean>();
+        strat.setType(MockBean.class);
+
+        strat.setColumnMapping("date");
+
+        CsvToBean<MockBean> csv = new CsvToBean<MockBean>();
+
+        csv.putPropertyEditor(Date.class, new MyDateEditor("yyyy-MM-dd"));
+
+        List<MockBean> list = csv.parse(strat, new StringReader(s));
+        assertThat(list, is(notNullValue()));
+        assertThat(list.size(), is(2));
+
+        assertThat(list.get(0).getDate(), is(new Date(2014-1900,1-1,1)));
+        assertThat(list.get(1).getDate(), is(nullValue()));
     }
 }
