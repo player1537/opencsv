@@ -13,7 +13,8 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertFalse;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.*;
 
 public class BeanToCsvTest {
 
@@ -147,5 +148,67 @@ public class BeanToCsvTest {
         String content = sw.getBuffer().toString();
         Assert.assertNotNull(content);
         Assert.assertEquals(NULL_TEST_STRING, content);
+    }
+
+    @Test
+    public void testNum() {
+        ColumnPositionMappingStrategy<MockBean> strat = new ColumnPositionMappingStrategy<MockBean>();
+        strat.setType(MockBean.class);
+        String[] columns = new String[]{"num"};
+        strat.setColumnMapping(columns);
+
+        StringWriter sw = new StringWriter();
+
+        List<MockBean> list = new ArrayList<MockBean>();
+
+        list.add(new MockBean());
+        list.get(0).setNum(0);
+
+        list.add(new MockBean());
+        list.get(1).setNum(-1);
+
+        assertThat(list.size(), is(2));
+
+        boolean value = bean.write(strat, sw, list);
+
+        assertThat(value, is(true));
+
+        assertThat(sw.getBuffer().toString(), is("\"num\"" + "\n"
+                        + "\"0\"" + "\n"
+                        + "\"-1\"" + "\n"
+        ));
+    }
+
+    @Test
+    public void testNullableNum() {
+        ColumnPositionMappingStrategy<MockBean> strat = new ColumnPositionMappingStrategy<MockBean>();
+        strat.setType(MockBean.class);
+        String[] columns = new String[]{"nullableNum"};
+        strat.setColumnMapping(columns);
+
+        StringWriter sw = new StringWriter();
+
+        List<MockBean> list = new ArrayList<MockBean>();
+
+        list.add(new MockBean());
+        list.get(0).setNullableNum(0);
+
+        list.add(new MockBean());
+        list.get(1).setNullableNum(-1);
+
+        list.add(new MockBean());
+        list.get(2).setNullableNum(null);
+
+        assertThat(list.size(), is(3));
+
+        boolean value = bean.write(strat, sw, list);
+
+        assertThat(value, is(true));
+
+        assertThat(sw.getBuffer().toString(), is("\"nullableNum\"" + "\n"
+                        + "\"0\"" + "\n"
+                        + "\"-1\"" + "\n"
+                        + "\"null\"" + "\n"
+        ));
     }
 }

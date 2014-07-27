@@ -17,14 +17,21 @@ package au.com.bytecode.opencsv.bean;
  */
 
 import au.com.bytecode.opencsv.CSVWriter;
+import au.com.bytecode.opencsv.editors.IntegerEditor;
+import au.com.bytecode.opencsv.editors.PrimitiveIntegerEditor;
+import au.com.bytecode.opencsv.editors.StringEditor;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
+import java.beans.PropertyEditor;
+import java.beans.PropertyEditorManager;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Allows to export Java beans content to a new CSV spreadsheet file.
@@ -32,8 +39,13 @@ import java.util.List;
  * @author Kali &lt;kali.tystrit@gmail.com&gt;
  */
 public class BeanToCsv<T> {
+    private Map<Class<?>, PropertyEditor> editorMap = null;
 
     public BeanToCsv() {
+        editorMap = new HashMap<Class<?>, PropertyEditor>();
+        addEditorToMap(int.class, new PrimitiveIntegerEditor());
+        addEditorToMap(Integer.class, new IntegerEditor());
+        addEditorToMap(String.class, new StringEditor());
     }
 
     public boolean write(MappingStrategy<T> mapper, Writer writer,
@@ -50,7 +62,7 @@ public class BeanToCsv<T> {
             csv.writeNext(processHeader(mapper));
             List<Method> getters = findGetters(mapper);
             for (Object obj : objects) {
-                String[] line = processObject(getters, obj);
+                String[] line = processObject(mapper, getters, obj);
                 csv.writeNext(line);
             }
             return true;
@@ -72,18 +84,23 @@ public class BeanToCsv<T> {
         return values.toArray(new String[0]);
     }
 
-    protected String[] processObject(List<Method> getters, Object bean)
+    protected String[] processObject(MappingStrategy<T> mapper, List<Method> getters, Object bean)
             throws IntrospectionException, IllegalArgumentException,
-            IllegalAccessException, InvocationTargetException {
+            IllegalAccessException, InvocationTargetException, InstantiationException {
         List<String> values = new ArrayList<String>();
+
+        int i = 0;
+        PropertyDescriptor prop = mapper.findDescriptor(i);
+
         // retrieve bean values
         for (Method getter : getters) {
             Object value = getter.invoke(bean, (Object[]) null);
-            if (value == null) {
-                values.add("null");
-            } else {
-                values.add(value.toString());
-            }
+            PropertyEditor editor = getPropertyEditor(prop);
+            editor.setValue(value);
+            values.add(editor.getAsText());
+
+            i++;
+            prop = mapper.findDescriptor(i);
         }
         return values.toArray(new String[0]);
     }
@@ -103,5 +120,33 @@ public class BeanToCsv<T> {
             prop = mapper.findDescriptor(i);
         }
         return readers;
+    }
+
+
+    private PropertyEditor getPropertyEditorValue(Class<?> cls) {
+        PropertyEditor editor = editorMap.get(cls);
+
+        if (editor == null) {
+            editor = PropertyEditorManager.findEditor(cls);
+            addEditorToMap(cls, editor);
+        }
+
+        return editor;
+    }
+
+    private void addEditorToMap(Class<?> cls, PropertyEditor editor) {
+        if (editor != null) {
+            editorMap.put(cls, editor);
+        }
+    }
+
+
+    /*
+     * Attempt to find custom property editor on descriptor first, else try the propery editor manager.
+     */
+    protected PropertyEditor getPropertyEditor(PropertyDescriptor desc) throws InstantiationException, IllegalAccessException {
+        Class<?> cls = desc.getPropertyEditorClass();
+        if (null != cls) return (PropertyEditor) cls.newInstance();
+        return getPropertyEditorValue(desc.getPropertyType());
     }
 }
