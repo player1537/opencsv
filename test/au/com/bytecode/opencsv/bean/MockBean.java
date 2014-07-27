@@ -21,6 +21,7 @@ package au.com.bytecode.opencsv.bean;
         private String id;
         private String orderNumber;
         private int num;
+        private Integer nullableNum;
         public String getId() {
             return id;
         }
@@ -45,4 +46,10 @@ package au.com.bytecode.opencsv.bean;
         public void setNum(int num) {
             this.num = num;
         }
-    }
+        public Integer getNullableNum() {
+            return nullableNum;
+        }
+        public void setNullableNum(Integer nullableNum) {
+            this.nullableNum = nullableNum;
+        }
+}

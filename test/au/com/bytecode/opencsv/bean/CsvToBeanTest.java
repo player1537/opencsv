@@ -7,6 +7,10 @@ import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.List;
+
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.*;
 
 public class CsvToBeanTest {
 
@@ -40,5 +44,67 @@ public class CsvToBeanTest {
     public void throwRuntimeExceptionWhenExceptionIsThrown() {
         CsvToBean bean = new CsvToBean();
         bean.parse(createErrorMappingStrategy(), createReader());
+    }
+
+    @Test
+    public void testNum() {
+        String s = "" +
+                "\"0\"\n" +
+                "-1\n";
+
+        ColumnPositionMappingStrategy<MockBean> strat = new ColumnPositionMappingStrategy<MockBean>();
+        strat.setType(MockBean.class);
+
+        strat.setColumnMapping("num");
+
+        CsvToBean<MockBean> csv = new CsvToBean<MockBean>();
+        List<MockBean> list = csv.parse(strat, new StringReader(s));
+        assertThat(list, is(notNullValue()));
+        assertThat(list.size(), is(2));
+
+        assertThat(list.get(0).getNum(), is(0));
+        assertThat(list.get(1).getNum(), is(-1));
+    }
+
+    @Test
+    public void testNumErrorForEmptyString() {
+        String s = "" +
+                "\"\"\n";
+
+        ColumnPositionMappingStrategy<MockBean> strat = new ColumnPositionMappingStrategy<MockBean>();
+        strat.setType(MockBean.class);
+
+        strat.setColumnMapping("num");
+
+        CsvToBean<MockBean> csv = new CsvToBean<MockBean>();
+        try {
+            csv.parse(strat, new StringReader(s));
+        }
+        catch (RuntimeException e) {
+            return;
+        }
+        fail("should cause Exception");
+    }
+
+    @Test
+    public void testNullableNum() {
+        String s = "" +
+                "\"0\"\n" +
+                "\"-1\"\n" +
+                "\"\"\n";
+
+        ColumnPositionMappingStrategy<MockBean> strat = new ColumnPositionMappingStrategy<MockBean>();
+        strat.setType(MockBean.class);
+
+        strat.setColumnMapping("nullableNum");
+
+        CsvToBean<MockBean> csv = new CsvToBean<MockBean>();
+        List<MockBean> list = csv.parse(strat, new StringReader(s));
+        assertThat(list, is(notNullValue()));
+        assertThat(list.size(), is(3));
+
+        assertThat(list.get(0).getNullableNum(), is(0));
+        assertThat(list.get(1).getNullableNum(), is(-1));
+        assertThat(list.get(2).getNullableNum(), is(nullValue()));
     }
 }

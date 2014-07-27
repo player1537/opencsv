@@ -17,6 +17,7 @@ package au.com.bytecode.opencsv.bean;
  */
 
 import au.com.bytecode.opencsv.CSVReader;
+import au.com.bytecode.opencsv.editors.*;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
@@ -33,6 +34,9 @@ public class CsvToBean<T> {
     private Map<Class<?>, PropertyEditor> editorMap = null;
 
     public CsvToBean() {
+        editorMap = new HashMap<Class<?>, PropertyEditor>();
+        addEditorToMap(int.class, new PrimitiveIntegerEditor());
+        addEditorToMap(Integer.class, new IntegerEditor());
     }
 
     public List<T> parse(MappingStrategy<T> mapper, Reader reader) {
@@ -86,10 +90,6 @@ public class CsvToBean<T> {
     }
 
     private PropertyEditor getPropertyEditorValue(Class<?> cls) {
-        if (editorMap == null) {
-            editorMap = new HashMap<Class<?>, PropertyEditor>();
-        }
-
         PropertyEditor editor = editorMap.get(cls);
 
         if (editor == null) {
