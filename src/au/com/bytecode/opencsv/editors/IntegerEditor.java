@@ -6,7 +6,7 @@ public class IntegerEditor extends sun.beans.editors.IntegerEditor {
         Integer num = ((Integer)getValue());
         if (num == null) {
             // null to empty string
-            return "null";
+            return "";
         }
 
         return super.getAsText();

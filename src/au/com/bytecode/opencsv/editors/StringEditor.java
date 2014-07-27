@@ -6,7 +6,7 @@ public class StringEditor extends sun.beans.editors.StringEditor {
         String str = (String)getValue();
         if (str == null) {
             // null to empty string
-            return "null";
+            return "";
         }
 
         return super.getAsText();

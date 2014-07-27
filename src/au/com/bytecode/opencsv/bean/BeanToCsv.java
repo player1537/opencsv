@@ -134,7 +134,7 @@ public class BeanToCsv<T> {
         return editor;
     }
 
-    private void addEditorToMap(Class<?> cls, PropertyEditor editor) {
+    public void addEditorToMap(Class<?> cls, PropertyEditor editor) {
         if (editor != null) {
             editorMap.put(cls, editor);
         }

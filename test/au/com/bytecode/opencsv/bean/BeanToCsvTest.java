@@ -23,8 +23,8 @@ public class BeanToCsvTest {
             + "\"jimmy\",\"def098765\",\"456\"\n";
 
     private static final String NULL_TEST_STRING = "\"name\",\"orderNumber\",\"num\"\n"
-            + "\"null\",\"null\",\"1\"\n"
-            + "\"null\",\"null\",\"2\"\n";
+            + "\"\",\"\",\"1\"\n"
+            + "\"\",\"\",\"2\"\n";
 
     private List<MockBean> testData;
     private List<MockBean> nullData;
@@ -208,7 +208,7 @@ public class BeanToCsvTest {
         assertThat(sw.getBuffer().toString(), is("\"nullableNum\"" + "\n"
                         + "\"0\"" + "\n"
                         + "\"-1\"" + "\n"
-                        + "\"null\"" + "\n"
+                        + "\"\"" + "\n"
         ));
     }
 }
