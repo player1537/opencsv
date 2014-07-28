@@ -1,15 +1,17 @@
 package au.com.bytecode.opencsv.editors;
 
-public class ByteEditor extends sun.beans.editors.ByteEditor {
+import java.beans.*;
+
+public class ByteEditor extends PropertyEditorSupport {
     @Override
     public String getAsText() {
-        Byte num = ((Byte)getValue());
+        Byte num = (Byte)getValue();
         if (num == null) {
             // null to empty string
             return "";
         }
 
-        return super.getAsText();
+        return num.toString();
     }
 
     @Override
@@ -20,6 +22,6 @@ public class ByteEditor extends sun.beans.editors.ByteEditor {
             return;
         }
 
-        super.setAsText(text);
+        setValue(Byte.valueOf(text));
     }
 }

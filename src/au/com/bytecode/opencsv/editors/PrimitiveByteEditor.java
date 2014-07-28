@@ -1,10 +1,19 @@
 package au.com.bytecode.opencsv.editors;
 
-public class PrimitiveByteEditor extends sun.beans.editors.ByteEditor {
+import java.beans.*;
+
+public class PrimitiveByteEditor extends PropertyEditorSupport {
+    @Override
+    public String getAsText() {
+        byte num = (Byte)getValue();
+
+        return Byte.toString(num);
+    }
+
     @Override
     public void setAsText(String text) throws IllegalArgumentException {
         try {
-            super.setAsText(text);
+            setValue(Byte.parseByte(text));
         }
         catch (NumberFormatException e) {
             throw new IllegalArgumentException(String.format("Cannot convert \"\" string to byte", text), e);

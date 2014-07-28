@@ -1,15 +1,17 @@
 package au.com.bytecode.opencsv.editors;
 
-public class DoubleEditor extends sun.beans.editors.DoubleEditor {
+import java.beans.*;
+
+public class DoubleEditor extends PropertyEditorSupport {
     @Override
     public String getAsText() {
-        Double num = ((Double)getValue());
+        Double num = (Double)getValue();
         if (num == null) {
             // null to empty string
             return "";
         }
 
-        return super.getAsText();
+        return num.toString();
     }
 
     @Override
@@ -20,6 +22,6 @@ public class DoubleEditor extends sun.beans.editors.DoubleEditor {
             return;
         }
 
-        super.setAsText(text);
+        setValue(Double.valueOf(text));
     }
 }

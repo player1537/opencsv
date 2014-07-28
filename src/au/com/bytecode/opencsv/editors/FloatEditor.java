@@ -1,15 +1,17 @@
 package au.com.bytecode.opencsv.editors;
 
-public class FloatEditor extends sun.beans.editors.FloatEditor {
+import java.beans.*;
+
+public class FloatEditor extends PropertyEditorSupport {
     @Override
     public String getAsText() {
-        Float num = ((Float)getValue());
+        Float num = (Float)getValue();
         if (num == null) {
             // null to empty string
             return "";
         }
 
-        return super.getAsText();
+        return num.toString();
     }
 
     @Override
@@ -20,6 +22,6 @@ public class FloatEditor extends sun.beans.editors.FloatEditor {
             return;
         }
 
-        super.setAsText(text);
+        setValue(Float.valueOf(text));
     }
 }

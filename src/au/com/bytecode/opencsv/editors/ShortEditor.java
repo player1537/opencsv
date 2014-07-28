@@ -1,15 +1,17 @@
 package au.com.bytecode.opencsv.editors;
 
-public class ShortEditor extends sun.beans.editors.ShortEditor {
+import java.beans.*;
+
+public class ShortEditor extends PropertyEditorSupport {
     @Override
     public String getAsText() {
-        Short num = ((Short)getValue());
+        Short num = (Short)getValue();
         if (num == null) {
             // null to empty string
             return "";
         }
 
-        return super.getAsText();
+        return num.toString();
     }
 
     @Override
@@ -20,6 +22,6 @@ public class ShortEditor extends sun.beans.editors.ShortEditor {
             return;
         }
 
-        super.setAsText(text);
+        setValue(Short.valueOf(text));
     }
 }

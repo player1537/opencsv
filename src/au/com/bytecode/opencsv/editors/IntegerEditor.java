@@ -1,15 +1,17 @@
 package au.com.bytecode.opencsv.editors;
 
-public class IntegerEditor extends sun.beans.editors.IntegerEditor {
+import java.beans.*;
+
+public class IntegerEditor extends PropertyEditorSupport {
     @Override
     public String getAsText() {
-        Integer num = ((Integer)getValue());
+        Integer num = (Integer)getValue();
         if (num == null) {
             // null to empty string
             return "";
         }
 
-        return super.getAsText();
+        return num.toString();
     }
 
     @Override
@@ -20,6 +22,6 @@ public class IntegerEditor extends sun.beans.editors.IntegerEditor {
             return;
         }
 
-        super.setAsText(text);
+        setValue(Integer.valueOf(text));
     }
 }

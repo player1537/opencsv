@@ -1,15 +1,17 @@
 package au.com.bytecode.opencsv.editors;
 
-public class BooleanEditor extends sun.beans.editors.BooleanEditor {
+import java.beans.*;
+
+public class BooleanEditor extends PropertyEditorSupport {
     @Override
     public String getAsText() {
-        Boolean bool = ((Boolean)getValue());
+        Boolean bool = (Boolean)getValue();
         if (bool == null) {
             // null to empty string
             return "";
         }
 
-        return super.getAsText();
+        return bool.toString();
     }
 
     @Override
@@ -20,6 +22,6 @@ public class BooleanEditor extends sun.beans.editors.BooleanEditor {
             return;
         }
 
-        super.setAsText(text);
+        setValue(Boolean.valueOf(text));
     }
 }

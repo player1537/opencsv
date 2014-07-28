@@ -1,15 +1,17 @@
 package au.com.bytecode.opencsv.editors;
 
-public class LongEditor extends sun.beans.editors.LongEditor {
+import java.beans.*;
+
+public class LongEditor extends PropertyEditorSupport {
     @Override
     public String getAsText() {
-        Long num = ((Long)getValue());
+        Long num = (Long)getValue();
         if (num == null) {
             // null to empty string
             return "";
         }
 
-        return super.getAsText();
+        return num.toString();
     }
 
     @Override
@@ -20,6 +22,6 @@ public class LongEditor extends sun.beans.editors.LongEditor {
             return;
         }
 
-        super.setAsText(text);
+        setValue(Long.valueOf(text));
     }
 }

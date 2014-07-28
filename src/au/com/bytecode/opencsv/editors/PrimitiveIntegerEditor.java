@@ -1,10 +1,19 @@
 package au.com.bytecode.opencsv.editors;
 
-public class PrimitiveIntegerEditor extends sun.beans.editors.IntegerEditor {
+import java.beans.*;
+
+public class PrimitiveIntegerEditor extends PropertyEditorSupport {
+    @Override
+    public String getAsText() {
+        int num = (Integer)getValue();
+
+        return Integer.toString(num);
+    }
+
     @Override
     public void setAsText(String text) throws IllegalArgumentException {
         try {
-            super.setAsText(text);
+            setValue(Integer.parseInt(text));
         }
         catch (NumberFormatException e) {
             throw new IllegalArgumentException(String.format("Cannot convert \"\" string to int", text), e);
