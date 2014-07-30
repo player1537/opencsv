@@ -50,8 +50,12 @@ public class CsvToBeanTest {
     @Test
     public void testNum() {
         String s = "" +
+                "\"1\"\n" +
                 "\"0\"\n" +
-                "-1\n";
+                "\"-1\"\n" +
+                "\"010\"\n" +   // not octal, but decimal
+                "\"2147483647\"\n" + // max int value
+                "\"-2147483648\""; // min int value
 
         ColumnPositionMappingStrategy<MockBean> strat = new ColumnPositionMappingStrategy<MockBean>();
         strat.setType(MockBean.class);
@@ -61,10 +65,15 @@ public class CsvToBeanTest {
         CsvToBean<MockBean> csv = new CsvToBean<MockBean>();
         List<MockBean> list = csv.parse(strat, new StringReader(s));
         assertThat(list, is(notNullValue()));
-        assertThat(list.size(), is(2));
 
-        assertThat(list.get(0).getNum(), is(0));
-        assertThat(list.get(1).getNum(), is(-1));
+        int i = 0;
+        assertThat(list.get(i++).getNum(), is(1));
+        assertThat(list.get(i++).getNum(), is(0));
+        assertThat(list.get(i++).getNum(), is(-1));
+        assertThat(list.get(i++).getNum(), is(10));
+        assertThat(list.get(i++).getNum(), is(Integer.MAX_VALUE));
+        assertThat(list.get(i++).getNum(), is(Integer.MIN_VALUE));
+        assertThat(list.size(), is(i));
     }
 
     @Test
@@ -90,9 +99,13 @@ public class CsvToBeanTest {
     @Test
     public void testNullableNum() {
         String s = "" +
+                "\"1\"\n" +
                 "\"0\"\n" +
                 "\"-1\"\n" +
-                "\"\"\n";
+                "\"010\"\n" +   // not octal, but decimal
+                "\"2147483647\"\n" + // max int value
+                "\"-2147483648\"\n" + // min int value
+                "\"\"\n"; // null
 
         ColumnPositionMappingStrategy<MockBean> strat = new ColumnPositionMappingStrategy<MockBean>();
         strat.setType(MockBean.class);
@@ -102,11 +115,17 @@ public class CsvToBeanTest {
         CsvToBean<MockBean> csv = new CsvToBean<MockBean>();
         List<MockBean> list = csv.parse(strat, new StringReader(s));
         assertThat(list, is(notNullValue()));
-        assertThat(list.size(), is(3));
 
-        assertThat(list.get(0).getNullableNum(), is(0));
-        assertThat(list.get(1).getNullableNum(), is(-1));
-        assertThat(list.get(2).getNullableNum(), is(nullValue()));
+        int i = 0;
+        assertThat(list.get(i++).getNullableNum(), is(1));
+        assertThat(list.get(i++).getNullableNum(), is(0));
+        assertThat(list.get(i++).getNullableNum(), is(-1));
+        assertThat(list.get(i++).getNullableNum(), is(10));
+        assertThat(list.get(i++).getNullableNum(), is(Integer.MAX_VALUE));
+        assertThat(list.get(i++).getNullableNum(), is(Integer.MIN_VALUE));
+        assertThat(list.get(i++).getNullableNum(), is(nullValue()));
+
+        assertThat(list.size(), is(i));
     }
 
     @Test
@@ -126,9 +145,10 @@ public class CsvToBeanTest {
 
         List<MockBean> list = csv.parse(strat, new StringReader(s));
         assertThat(list, is(notNullValue()));
-        assertThat(list.size(), is(2));
 
-        assertThat(list.get(0).getDate(), is(new Date(2014-1900,1-1,1)));
-        assertThat(list.get(1).getDate(), is(nullValue()));
+        int i = 0;
+        assertThat(list.get(i++).getDate(), is(new Date(2014-1900,1-1,1)));
+        assertThat(list.get(i++).getDate(), is(nullValue()));
+        assertThat(list.size(), is(i));
     }
 }
