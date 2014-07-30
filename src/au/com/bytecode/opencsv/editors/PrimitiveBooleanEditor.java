@@ -16,7 +16,7 @@ public class PrimitiveBooleanEditor extends PropertyEditorSupport {
             setValue(Boolean.valueOf(text));
         }
         catch (NumberFormatException e) {
-            throw new IllegalArgumentException(String.format("Cannot convert \"\" string to boolean", text), e);
+            throw new IllegalArgumentException(String.format("Cannot convert \"%s\" string to boolean", text), e);
         }
     }
 }

@@ -16,7 +16,7 @@ public class PrimitiveIntegerEditor extends PropertyEditorSupport {
             setValue(Integer.parseInt(text));
         }
         catch (NumberFormatException e) {
-            throw new IllegalArgumentException(String.format("Cannot convert \"\" string to int", text), e);
+            throw new IllegalArgumentException(String.format("Cannot convert \"%s\" string to int", text), e);
         }
     }
 }

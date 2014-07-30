@@ -16,7 +16,7 @@ public class PrimitiveShortEditor extends PropertyEditorSupport {
             setValue(Short.parseShort(text));
         }
         catch (NumberFormatException e) {
-            throw new IllegalArgumentException(String.format("Cannot convert \"\" string to short", text), e);
+            throw new IllegalArgumentException(String.format("Cannot convert \"%s\" string to short", text), e);
         }
     }
 }

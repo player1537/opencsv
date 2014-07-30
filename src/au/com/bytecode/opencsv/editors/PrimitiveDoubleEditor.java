@@ -16,7 +16,7 @@ public class PrimitiveDoubleEditor extends PropertyEditorSupport {
             setValue(Double.parseDouble(text));
         }
         catch (NumberFormatException e) {
-            throw new IllegalArgumentException(String.format("Cannot convert \"\" string to double", text), e);
+            throw new IllegalArgumentException(String.format("Cannot convert \"%s\" string to double", text), e);
         }
     }
 }

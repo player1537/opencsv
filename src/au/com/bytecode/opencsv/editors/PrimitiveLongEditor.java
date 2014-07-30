@@ -16,7 +16,7 @@ public class PrimitiveLongEditor extends PropertyEditorSupport {
             setValue(Long.parseLong(text));
         }
         catch (NumberFormatException e) {
-            throw new IllegalArgumentException(String.format("Cannot convert \"\" string to long", text), e);
+            throw new IllegalArgumentException(String.format("Cannot convert \"%s\" string to long", text), e);
         }
     }
 }

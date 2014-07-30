@@ -16,7 +16,7 @@ public class PrimitiveByteEditor extends PropertyEditorSupport {
             setValue(Byte.parseByte(text));
         }
         catch (NumberFormatException e) {
-            throw new IllegalArgumentException(String.format("Cannot convert \"\" string to byte", text), e);
+            throw new IllegalArgumentException(String.format("Cannot convert \"%s\" string to byte", text), e);
         }
     }
 }

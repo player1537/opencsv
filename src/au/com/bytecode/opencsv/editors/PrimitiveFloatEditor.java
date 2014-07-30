@@ -16,7 +16,7 @@ public class PrimitiveFloatEditor extends PropertyEditorSupport {
             setValue(Float.parseFloat(text));
         }
         catch (NumberFormatException e) {
-            throw new IllegalArgumentException(String.format("Cannot convert \"\" string to float", text), e);
+            throw new IllegalArgumentException(String.format("Cannot convert \"%s\" string to float", text), e);
         }
     }
 }
