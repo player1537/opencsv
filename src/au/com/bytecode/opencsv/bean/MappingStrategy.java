@@ -44,4 +44,6 @@ public interface MappingStrategy<T> {
     public void captureHeader(CSVReader reader) throws IOException;
 
     public String columnName(int pos);
+
+    public Class<T> getType();
 }

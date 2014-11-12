@@ -85,6 +85,8 @@ public class BeanToCsvTest {
             public String columnName(int col) {
                 return "[" + col + "]";
             }
+
+            public Class<?> getType() { return null; }
         };
     }
 

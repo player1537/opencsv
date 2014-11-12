@@ -7,8 +7,7 @@ import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
@@ -42,6 +41,8 @@ public class CsvToBeanTest {
             public String columnName(int col) {
                 return null;
             }
+
+            public Class<?> getType() { return null; }
         };
     }
 
@@ -196,4 +197,99 @@ public class CsvToBeanTest {
         fail();
     }
 
+    @Test
+    public void testGetWritablePropertyNames() throws Exception {
+        Set expect = new LinkedHashSet();
+        expect.add("name");
+        expect.add("id");
+        expect.add("orderNumber");
+        expect.add("num");
+        expect.add("nullableNum");
+        expect.add("date");
+
+        Set propNames = CsvToBean.getWritablePropertyNamesOrdered(MockBean.class);
+        assertThat(propNames, is(expect));
+        // check order
+        assertThat(propNames.toString(), is("[name, id, orderNumber, num, nullableNum, date]"));
+    }
+
+    @Test
+    public void testStrictModeNoError() {
+        String s = "" +
+                "\"0\", \"1\", \"2\", \"3\", \"4\", \"2011-1-1\"\n";
+
+        ColumnPositionMappingStrategy<MockBean> strat = new ColumnPositionMappingStrategy<MockBean>();
+        strat.setType(MockBean.class);
+
+        strat.setColumnMapping(new String[]{"name", "id", "orderNumber", "num", "nullableNum", "date"});
+
+        CsvToBean<MockBean> csv = new CsvToBean<MockBean>();
+        csv.strict(true);
+        csv.putPropertyEditor(Date.class, new MyDateEditor("yyyy-MM-dd"));
+
+        csv.parse(strat, new StringReader(s));
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testStrictModeIllegalColumn() {
+        String s = "" +
+                "\"0\", \"1\"\n";
+
+        ColumnPositionMappingStrategy<MockBean> strat = new ColumnPositionMappingStrategy<MockBean>();
+        strat.setType(MockBean.class);
+
+        strat.setColumnMapping(new String[]{"num", "XnullableNum"});
+
+        CsvToBean<MockBean> csv = new CsvToBean<MockBean>();
+        csv.strict(true);
+
+        try {
+            csv.parse(strat, new StringReader(s));
+        } catch (RuntimeException e) {
+            assertThat(e.getMessage(), is("Error parsing CSV at line 1: [column: XnullableNum, value: 1], column \"XnullableNum\" is not contained in the bean \"au.com.bytecode.opencsv.bean.MockBean\""));
+            throw e;
+        }
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testStrictModeDuplicateColumn() {
+        String s = "" +
+                "\"0\", \"1\"\n";
+
+        ColumnPositionMappingStrategy<MockBean> strat = new ColumnPositionMappingStrategy<MockBean>();
+        strat.setType(MockBean.class);
+
+        strat.setColumnMapping(new String[] {"num", "num"});
+
+        CsvToBean<MockBean> csv = new CsvToBean<MockBean>();
+        csv.strict(true);
+
+        try {
+            csv.parse(strat, new StringReader(s));
+        } catch (RuntimeException e) {
+            assertThat(e.getMessage(), is("Error parsing CSV at line 1: [column: num, value: 1], column \"num\" has been already set for the bean \"au.com.bytecode.opencsv.bean.MockBean\""));
+            throw e;
+        }
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testStrictModeLackOfColumn() {
+        String s = "" +
+                "\"0\", \"1\"\n";
+
+        ColumnPositionMappingStrategy<MockBean> strat = new ColumnPositionMappingStrategy<MockBean>();
+        strat.setType(MockBean.class);
+
+        strat.setColumnMapping(new String[] {"num", "nullableNum"});
+
+        CsvToBean<MockBean> csv = new CsvToBean<MockBean>();
+        csv.setCheckFullyPopulated(true); // more strictly
+
+        try {
+            csv.parse(strat, new StringReader(s));
+        } catch (RuntimeException e) {
+            assertThat(e.getMessage(), is("Error parsing CSV at line 1: " + "given CSV does not contain all fiedlds. fields [date, id, name, orderNumber] have not been set"));
+            throw e;
+        }
+    }
 }
