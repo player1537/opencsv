@@ -38,6 +38,10 @@ public class CsvToBeanTest {
             public void captureHeader(CSVReader reader) throws IOException {
                 throw new IOException("This is the test exception");
             }
+
+            public String columnName(int col) {
+                return null;
+            }
         };
     }
 
@@ -151,4 +155,45 @@ public class CsvToBeanTest {
         assertThat(list.get(i++).getDate(), is(nullValue()));
         assertThat(list.size(), is(i));
     }
+
+    @Test(expected = RuntimeException.class)
+    public void testConvertError1() {
+        String s = "" +
+                "\"\"\n";
+
+        ColumnPositionMappingStrategy<MockBean> strat = new ColumnPositionMappingStrategy<MockBean>();
+        strat.setType(MockBean.class);
+
+        strat.setColumnMapping("num");
+
+        CsvToBean<MockBean> csv = new CsvToBean<MockBean>();
+        try {
+            csv.parse(strat, new StringReader(s));
+        } catch (RuntimeException e) {
+            assertThat(e.getMessage(), is("Error parsing CSV at line 1: [column: num, value: ], Cannot convert \"\" string to int"));
+            throw e;
+        }
+        fail();
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testConvertError2() {
+        String s = "" +
+                "\"0\", \"2011-1-1\"\n";
+
+        ColumnPositionMappingStrategy<MockBean> strat = new ColumnPositionMappingStrategy<MockBean>();
+        strat.setType(MockBean.class);
+
+        strat.setColumnMapping(new String[] {"num", "nullableNum"});
+
+        CsvToBean<MockBean> csv = new CsvToBean<MockBean>();
+        try {
+            csv.parse(strat, new StringReader(s));
+        } catch (RuntimeException e) {
+            assertThat(e.getMessage(), is("Error parsing CSV at line 1: [column: nullableNum, value: 2011-1-1], For input string: \"2011-1-1\""));
+            throw e;
+        }
+        fail();
+    }
+
 }

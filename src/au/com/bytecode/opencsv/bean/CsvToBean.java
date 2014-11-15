@@ -26,6 +26,7 @@ import java.io.Reader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class CsvToBean<T> {
     private PropertyEditorContainer propertyEditorManager = new PropertyEditorContainer();
@@ -38,17 +39,20 @@ public class CsvToBean<T> {
     }
 
     public List<T> parse(MappingStrategy<T> mapper, CSVReader csv) {
+        T obj = null;
+        int i = 0;
         try {
             mapper.captureHeader(csv);
             String[] line;
             List<T> list = new ArrayList<T>();
             while (null != (line = csv.readNext())) {
-                T obj = processLine(mapper, line);
+                i++;
+                obj = processLine(mapper, line);
                 list.add(obj); // TODO: (Kyle) null check object
             }
             return list;
         } catch (Exception e) {
-            throw new RuntimeException("Error parsing CSV!", e);
+            throw new RuntimeException(String.format("Error parsing CSV at line %d: %s", i, e.getMessage()), e);
         }
     }
 
@@ -58,7 +62,13 @@ public class CsvToBean<T> {
             PropertyDescriptor prop = mapper.findDescriptor(col);
             if (null != prop) {
                 String value = checkForTrim(line[col], prop);
-                Object obj = convertValue(value, prop);
+                Object obj;
+                try {
+                    obj = convertValue(value, prop);
+                } catch (IllegalArgumentException e) {
+                    throw new IllegalArgumentException(String.format("[column: %s, value: %s], %s",
+                            mapper.columnName(col), line[col], e.getMessage()), e);
+                }
                 prop.getWriteMethod().invoke(bean, obj);
             }
         }

@@ -27,6 +27,10 @@ public class ColumnPositionMappingStrategy<T> extends HeaderColumnNameMappingStr
         //do nothing, first line is not header
     }
 
+    public String columnName(int col) {
+        return getColumnName(col);
+    }
+
     protected String getColumnName(int col) {
         return col < columnMapping.length ? columnMapping[col] : null;
     }

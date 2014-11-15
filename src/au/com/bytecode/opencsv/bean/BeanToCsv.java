@@ -29,6 +29,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Allows to export Java beans content to a new CSV spreadsheet file.
@@ -51,16 +52,18 @@ public class BeanToCsv<T> {
         if (objects == null || objects.isEmpty())
             return false;
 
+        int i = 0;
         try {
             csv.writeNext(processHeader(mapper));
             List<Method> getters = findGetters(mapper);
             for (Object obj : objects) {
+                i++;
                 String[] line = processObject(mapper, getters, obj);
                 csv.writeNext(line);
             }
             return true;
         } catch (Exception e) {
-            throw new RuntimeException("Error writing CSV !", e);
+            throw new RuntimeException(String.format("Error constructing CSV at line %d for column %s: %s", i, Objects.toString(mapper.columnName(i)), e.getMessage()), e);
         }
     }
 

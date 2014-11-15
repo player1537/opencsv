@@ -81,6 +81,10 @@ public class BeanToCsvTest {
 
             public void captureHeader(CSVReader reader) throws IOException {
             }
+
+            public String columnName(int col) {
+                return "[" + col + "]";
+            }
         };
     }
 

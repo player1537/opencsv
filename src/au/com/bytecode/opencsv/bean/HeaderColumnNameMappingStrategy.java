@@ -40,6 +40,10 @@ public class HeaderColumnNameMappingStrategy<T> implements MappingStrategy<T> {
         return (null != columnName && columnName.trim().length() > 0) ? findDescriptor(columnName) : null;
     }
 
+    public String columnName(int col) {
+        return getColumnName(col);
+    }
+
     protected String getColumnName(int col) {
         return (null != header && col < header.length) ? header[col] : null;
     }
