@@ -73,19 +73,82 @@ public class CSVReaderBuilder {
      *
      * @param csvParser the parser to use to parse the input
      */
-    CSVReaderBuilder withCSVParser(
-            final /*@Nullable*/ CSVParser csvParser) {
+    CSVReaderBuilder withCSVParser(final /*@Nullable*/ CSVParser csvParser) {
         this.csvParser = csvParser;
         return this;
     }
 
 
     /**
+     * Sets the delimiter to use for separating entries
+     *
+     * @param separator the delimiter to use for separating entries
+     */
+    CSVReaderBuilder withSeparator(final char separator) {
+        csvParserBuilder.withSeparator(separator);
+        return this;
+    }
+
+
+    /**
+     * Sets the character to use for quoted elements
+     *
+     * @param quoteChar the character to use for quoted elements
+     */
+    CSVReaderBuilder withQuoteChar(final char quoteChar) {
+        csvParserBuilder.withQuoteChar(quoteChar);
+        return this;
+    }
+
+
+    /**
+     * Sets the character to use for escaping a separator or quote
+     *
+     * @param escapeChar the character to use for escaping a separator or quote
+     */
+    CSVReaderBuilder withEscapeChar(final char escapeChar) {
+        csvParserBuilder.withEscapeChar(escapeChar);
+        return this;
+    }
+
+
+    /**
+     * Sets the strict quotes setting - if true, characters
+     * outside the quotes are ignored
+     *
+     * @param strictQuotes if true, characters outside the quotes are ignored
+     */
+    CSVReaderBuilder withStrictQuotes(final boolean strictQuotes) {
+        csvParserBuilder.withStrictQuotes(strictQuotes);
+        return this;
+    }
+
+    /**
+     * Sets the ignore leading whitespace setting - if true, white space
+     * in front of a quote in a field is ignored
+     *
+     * @param ignoreLeadingWhiteSpace if true, white space in front of a quote in a field is ignored
+     */
+    CSVReaderBuilder withIgnoreLeadingWhiteSpace(final boolean ignoreLeadingWhiteSpace) {
+        csvParserBuilder.withIgnoreLeadingWhiteSpace(ignoreLeadingWhiteSpace);
+        return this;
+    }
+
+    /**
+     * Sets the ignore quotations mode - if true, quotations are ignored
+     *
+     * @param ignoreQuotations if true, quotations are ignored
+     */
+    CSVReaderBuilder withIgnoreQuotations(final boolean ignoreQuotations) {
+        csvParserBuilder.withIgnoreQuotations(ignoreQuotations);
+        return this;
+    }
+
+    /**
      * Constructs CSVReader
      */
     CSVReader build() {
-        final CSVParser parser =
-                (csvParser != null ? csvParser : new CSVParser());
+        final CSVParser parser = (csvParser != null) ? csvParser : csvParserBuilder.build();
         return new CSVReader(reader, skipLines, parser);
     }
 }
