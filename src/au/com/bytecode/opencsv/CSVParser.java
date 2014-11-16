@@ -31,7 +31,7 @@ public class CSVParser {
 
     final char separator;
 
-    final char quotechar;
+    final char quoteChar;
 
     final char escape;
 
@@ -107,21 +107,21 @@ public class CSVParser {
      * Constructs CSVParser with supplied separator and quote char.
      *
      * @param separator the delimiter to use for separating entries
-     * @param quotechar the character to use for quoted elements
+     * @param quoteChar the character to use for quoted elements
      */
-    public CSVParser(char separator, char quotechar) {
-        this(separator, quotechar, DEFAULT_ESCAPE_CHARACTER);
+    public CSVParser(char separator, char quoteChar) {
+        this(separator, quoteChar, DEFAULT_ESCAPE_CHARACTER);
     }
 
     /**
      * Constructs CSVReader with supplied separator and quote char.
      *
      * @param separator the delimiter to use for separating entries
-     * @param quotechar the character to use for quoted elements
+     * @param quoteChar the character to use for quoted elements
      * @param escape    the character to use for escaping a separator or quote
      */
-    public CSVParser(char separator, char quotechar, char escape) {
-        this(separator, quotechar, escape, DEFAULT_STRICT_QUOTES);
+    public CSVParser(char separator, char quoteChar, char escape) {
+        this(separator, quoteChar, escape, DEFAULT_STRICT_QUOTES);
     }
 
     /**
@@ -129,12 +129,12 @@ public class CSVParser {
      * Allows setting the "strict quotes" flag
      *
      * @param separator    the delimiter to use for separating entries
-     * @param quotechar    the character to use for quoted elements
+     * @param quoteChar    the character to use for quoted elements
      * @param escape       the character to use for escaping a separator or quote
      * @param strictQuotes if true, characters outside the quotes are ignored
      */
-    public CSVParser(char separator, char quotechar, char escape, boolean strictQuotes) {
-        this(separator, quotechar, escape, strictQuotes, DEFAULT_IGNORE_LEADING_WHITESPACE);
+    public CSVParser(char separator, char quoteChar, char escape, boolean strictQuotes) {
+        this(separator, quoteChar, escape, strictQuotes, DEFAULT_IGNORE_LEADING_WHITESPACE);
     }
 
     /**
@@ -142,13 +142,13 @@ public class CSVParser {
      * Allows setting the "strict quotes" and "ignore leading whitespace" flags
      *
      * @param separator               the delimiter to use for separating entries
-     * @param quotechar               the character to use for quoted elements
+     * @param quoteChar               the character to use for quoted elements
      * @param escape                  the character to use for escaping a separator or quote
      * @param strictQuotes            if true, characters outside the quotes are ignored
      * @param ignoreLeadingWhiteSpace if true, white space in front of a quote in a field is ignored
      */
-    public CSVParser(char separator, char quotechar, char escape, boolean strictQuotes, boolean ignoreLeadingWhiteSpace) {
-        this(separator, quotechar, escape, strictQuotes, ignoreLeadingWhiteSpace, DEFAULT_IGNORE_QUOTATIONS);
+    public CSVParser(char separator, char quoteChar, char escape, boolean strictQuotes, boolean ignoreLeadingWhiteSpace) {
+        this(separator, quoteChar, escape, strictQuotes, ignoreLeadingWhiteSpace, DEFAULT_IGNORE_QUOTATIONS);
     }
 
     /**
@@ -156,21 +156,21 @@ public class CSVParser {
      * Allows setting the "strict quotes" and "ignore leading whitespace" flags
      *
      * @param separator               the delimiter to use for separating entries
-     * @param quotechar               the character to use for quoted elements
+     * @param quoteChar               the character to use for quoted elements
      * @param escape                  the character to use for escaping a separator or quote
      * @param strictQuotes            if true, characters outside the quotes are ignored
      * @param ignoreLeadingWhiteSpace if true, white space in front of a quote in a field is ignored
      */
-    public CSVParser(char separator, char quotechar, char escape, boolean strictQuotes, boolean ignoreLeadingWhiteSpace,
+    public CSVParser(char separator, char quoteChar, char escape, boolean strictQuotes, boolean ignoreLeadingWhiteSpace,
                      boolean ignoreQuotations) {
-        if (anyCharactersAreTheSame(separator, quotechar, escape)) {
+        if (anyCharactersAreTheSame(separator, quoteChar, escape)) {
             throw new UnsupportedOperationException("The separator, quote, and escape characters must be different!");
         }
         if (separator == NULL_CHARACTER) {
             throw new UnsupportedOperationException("The separator character must be defined!");
         }
         this.separator = separator;
-        this.quotechar = quotechar;
+        this.quoteChar = quoteChar;
         this.escape = escape;
         this.strictQuotes = strictQuotes;
         this.ignoreLeadingWhiteSpace = ignoreLeadingWhiteSpace;
@@ -240,7 +240,7 @@ public class CSVParser {
                     sb.append(nextLine.charAt(i + 1));
                     i++;
                 }
-            } else if (c == quotechar) {
+            } else if (c == quoteChar) {
                 if (isNextCharacterEscapedQuote(nextLine, (inQuotes && !ignoreQuotations) || inField, i)) {
                     sb.append(nextLine.charAt(i + 1));
                     i++;
@@ -305,7 +305,7 @@ public class CSVParser {
     private boolean isNextCharacterEscapedQuote(String nextLine, boolean inQuotes, int i) {
         return inQuotes  // we are in quotes, therefore there can be escaped quotes in here.
                 && nextLine.length() > (i + 1)  // there is indeed another character to check.
-                && nextLine.charAt(i + 1) == quotechar;
+                && nextLine.charAt(i + 1) == quoteChar;
     }
 
     /**
@@ -319,7 +319,7 @@ public class CSVParser {
     protected boolean isNextCharacterEscapable(String nextLine, boolean inQuotes, int i) {
         return inQuotes  // we are in quotes, therefore there can be escaped quotes in here.
                 && nextLine.length() > (i + 1)  // there is indeed another character to check.
-                && (nextLine.charAt(i + 1) == quotechar || nextLine.charAt(i + 1) == this.escape);
+                && (nextLine.charAt(i + 1) == quoteChar || nextLine.charAt(i + 1) == this.escape);
     }
 
     /**

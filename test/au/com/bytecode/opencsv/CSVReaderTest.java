@@ -260,7 +260,7 @@ public class CSVReaderTest {
 
 
     /**
-     * Same as testADoubleQuoteAsDataElement but I changed the quotechar to a
+     * Same as testADoubleQuoteAsDataElement but I changed the quoteChar to a
      * single quote.
      *
      * @throws IOException
@@ -285,7 +285,7 @@ public class CSVReaderTest {
     }
 
     /**
-     * Same as testADoubleQuoteAsDataElement but I changed the quotechar to a
+     * Same as testADoubleQuoteAsDataElement but I changed the quoteChar to a
      * single quote.  Also the middle field is empty.
      *
      * @throws IOException

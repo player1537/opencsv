@@ -41,7 +41,7 @@ public class CSVParserBuilderTest {
                 parser.separator);
         assertEquals(
                 CSVParser.DEFAULT_QUOTE_CHARACTER,
-                parser.quotechar);
+                parser.quoteChar);
         assertEquals(
                 CSVParser.DEFAULT_ESCAPE_CHARACTER,
                 parser.escape);
@@ -69,7 +69,7 @@ public class CSVParserBuilderTest {
         final char expected = '2';
         builder.withQuoteChar(expected);
         assertEquals(expected, builder.quoteChar);
-        assertEquals(expected, builder.build().quotechar);
+        assertEquals(expected, builder.build().quoteChar);
     }
 
     @Test
