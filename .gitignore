@@ -6,3 +6,4 @@ opencsv-2.0.1-SNAPSHOT.patch
 pom.xml.cobertura
 .gradle
 build/
+*~
