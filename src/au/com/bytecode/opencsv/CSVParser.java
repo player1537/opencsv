@@ -29,13 +29,13 @@ import java.util.List;
  */
 public class CSVParser {
 
-    private static final int INITIAL_READ_SIZE = 128;
-    private final char separator;
-    private final char quoteChar;
-    private final char escape;
-    private final boolean strictQuotes;
-    private final boolean ignoreLeadingWhiteSpace;
-    private final boolean ignoreQuotations;
+    protected static final int INITIAL_READ_SIZE = 128;
+    protected final char separator;
+    protected final char quoteChar;
+    protected final char escape;
+    protected final boolean strictQuotes;
+    protected final boolean ignoreLeadingWhiteSpace;
+    protected final boolean ignoreQuotations;
     private String pending;
     private boolean inField = false;
 
@@ -314,7 +314,7 @@ public class CSVParser {
      * @param i        current index in line
      * @return true if the following character is a quote
      */
-    private boolean isNextCharacterEscapedQuote(String nextLine, boolean inQuotes, int i) {
+    protected boolean isNextCharacterEscapedQuote(String nextLine, boolean inQuotes, int i) {
         return inQuotes  // we are in quotes, therefore there can be escaped quotes in here.
                 && nextLine.length() > (i + 1)  // there is indeed another character to check.
                 && nextLine.charAt(i + 1) == quoteChar;
@@ -332,7 +332,7 @@ public class CSVParser {
      * @param i        current index in line
      * @return true if the following character is escapable.
      */
-    private boolean isNextCharacterEscapable(String nextLine, boolean inQuotes, int i) {
+    protected boolean isNextCharacterEscapable(String nextLine, boolean inQuotes, int i) {
         return inQuotes  // we are in quotes, therefore there can be escaped quotes in here.
                 && nextLine.length() > (i + 1)  // there is indeed another character to check.
                 && (nextLine.charAt(i + 1) == quoteChar || nextLine.charAt(i + 1) == this.escape);
@@ -346,7 +346,7 @@ public class CSVParser {
      * @param sb A sequence of characters to examine
      * @return true if every character in the sequence is whitespace
      */
-    private boolean isAllWhiteSpace(CharSequence sb) {
+    protected boolean isAllWhiteSpace(CharSequence sb) {
         boolean result = true;
         for (int i = 0; i < sb.length(); i++) {
             char c = sb.charAt(i);
