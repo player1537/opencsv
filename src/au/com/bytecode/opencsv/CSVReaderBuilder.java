@@ -21,18 +21,18 @@ import java.io.Reader;
 /**
  * Builder for creating a CSVReader.
  * <br>
- * <code>
- * final CSVParser parser =
- * new CSVParserBuilder()
- * .withSeparator('\t')
- * .withIgnoreQuotations(true)
- * .build();
- * final CSVReader reader =
- * new CSVReaderBuilder(new StringReader(csv))
- * .withSkipLines(1)
- * .withCSVParser(parser)
- * .build();
- * </code>
+ * <pre>
+ * {@code
+ * final CSVParser parser = new CSVParserBuilder()
+ *     .withSeparator('\t')
+ *     .withIgnoreQuotations(true)
+ *     .build();
+ * final CSVReader reader = new CSVReaderBuilder(new StringReader(csv))
+ *     .withSkipLines(1)
+ *     .withCSVParser(parser)
+ *     .build();
+ * }
+ * </pre>
  *
  * @see CSVReader
  */
@@ -48,8 +48,7 @@ public class CSVReaderBuilder {
      *
      * @param reader the reader to an underlying CSV source.
      */
-    CSVReaderBuilder(
-            final Reader reader) {
+    public CSVReaderBuilder(final Reader reader) {
         if (reader == null) {
             throw new IllegalArgumentException("Reader may not be null");
         }
@@ -60,9 +59,9 @@ public class CSVReaderBuilder {
      * Sets the line number to skip for start reading
      *
      * @param skipLines the line number to skip for start reading
+     * @return this (for method chaining)
      */
-    CSVReaderBuilder withSkipLines(
-            final int skipLines) {
+    public CSVReaderBuilder withSkipLines(final int skipLines) {
         this.skipLines = (skipLines <= 0 ? 0 : skipLines);
         return this;
     }
@@ -72,8 +71,9 @@ public class CSVReaderBuilder {
      * Sets the parser to use to parse the input
      *
      * @param csvParser the parser to use to parse the input
+     * @return this (for method chaining)
      */
-    CSVReaderBuilder withCSVParser(final /*@Nullable*/ CSVParser csvParser) {
+    public CSVReaderBuilder withCSVParser(final /*@Nullable*/ CSVParser csvParser) {
         this.csvParser = csvParser;
         return this;
     }
@@ -83,8 +83,9 @@ public class CSVReaderBuilder {
      * Sets the delimiter to use for separating entries
      *
      * @param separator the delimiter to use for separating entries
+     * @return this (for method chaining)
      */
-    CSVReaderBuilder withSeparator(final char separator) {
+    public CSVReaderBuilder withSeparator(final char separator) {
         csvParserBuilder.withSeparator(separator);
         return this;
     }
@@ -94,8 +95,9 @@ public class CSVReaderBuilder {
      * Sets the character to use for quoted elements
      *
      * @param quoteChar the character to use for quoted elements
+     * @return this (for method chaining)
      */
-    CSVReaderBuilder withQuoteChar(final char quoteChar) {
+    public CSVReaderBuilder withQuoteChar(final char quoteChar) {
         csvParserBuilder.withQuoteChar(quoteChar);
         return this;
     }
@@ -105,8 +107,9 @@ public class CSVReaderBuilder {
      * Sets the character to use for escaping a separator or quote
      *
      * @param escapeChar the character to use for escaping a separator or quote
+     * @return this (for method chaining)
      */
-    CSVReaderBuilder withEscapeChar(final char escapeChar) {
+    public CSVReaderBuilder withEscapeChar(final char escapeChar) {
         csvParserBuilder.withEscapeChar(escapeChar);
         return this;
     }
@@ -117,8 +120,9 @@ public class CSVReaderBuilder {
      * outside the quotes are ignored
      *
      * @param strictQuotes if true, characters outside the quotes are ignored
+     * @return this (for method chaining)
      */
-    CSVReaderBuilder withStrictQuotes(final boolean strictQuotes) {
+    public CSVReaderBuilder withStrictQuotes(final boolean strictQuotes) {
         csvParserBuilder.withStrictQuotes(strictQuotes);
         return this;
     }
@@ -128,8 +132,9 @@ public class CSVReaderBuilder {
      * in front of a quote in a field is ignored
      *
      * @param ignoreLeadingWhiteSpace if true, white space in front of a quote in a field is ignored
+     * @return this (for method chaining)
      */
-    CSVReaderBuilder withIgnoreLeadingWhiteSpace(final boolean ignoreLeadingWhiteSpace) {
+    public CSVReaderBuilder withIgnoreLeadingWhiteSpace(final boolean ignoreLeadingWhiteSpace) {
         csvParserBuilder.withIgnoreLeadingWhiteSpace(ignoreLeadingWhiteSpace);
         return this;
     }
@@ -138,16 +143,19 @@ public class CSVReaderBuilder {
      * Sets the ignore quotations mode - if true, quotations are ignored
      *
      * @param ignoreQuotations if true, quotations are ignored
+     * @return this (for method chaining)
      */
-    CSVReaderBuilder withIgnoreQuotations(final boolean ignoreQuotations) {
+    public CSVReaderBuilder withIgnoreQuotations(final boolean ignoreQuotations) {
         csvParserBuilder.withIgnoreQuotations(ignoreQuotations);
         return this;
     }
 
     /**
      * Constructs CSVReader
+     *
+     * @return A reader with the specified settings
      */
-    CSVReader build() {
+    public CSVReader build() {
         final CSVParser parser = (csvParser != null) ? csvParser : csvParserBuilder.build();
         return new CSVReader(reader, skipLines, parser);
     }
