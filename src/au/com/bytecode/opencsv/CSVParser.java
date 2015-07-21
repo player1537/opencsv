@@ -29,68 +29,57 @@ import java.util.List;
  */
 public class CSVParser {
 
-    final char separator;
-
-    final char quoteChar;
-
-    final char escape;
-
-    final boolean strictQuotes;
-
+    private static final int INITIAL_READ_SIZE = 128;
+    private final char separator;
+    private final char quoteChar;
+    private final char escape;
+    private final boolean strictQuotes;
+    private final boolean ignoreLeadingWhiteSpace;
+    private final boolean ignoreQuotations;
     private String pending;
     private boolean inField = false;
 
-    final boolean ignoreLeadingWhiteSpace;
-
-    final boolean ignoreQuotations;
-
     /**
-     * The default separator to use if none is supplied to the constructor.
+     * The default separator to use (a comma).
      */
     public static final char DEFAULT_SEPARATOR = ',';
 
-    public static final int INITIAL_READ_SIZE = 128;
-
     /**
-     * The default quote character to use if none is supplied to the
-     * constructor.
+     * The default quote character to use (a double quote).
      */
     public static final char DEFAULT_QUOTE_CHARACTER = '"';
 
-
     /**
-     * The default escape character to use if none is supplied to the
-     * constructor.
+     * The default escape character to use (a backslash).
      */
     public static final char DEFAULT_ESCAPE_CHARACTER = '\\';
 
     /**
-     * The default strict quote behavior to use if none is supplied to the
-     * constructor
+     * The default strict quote behavior (non-strict quotes).
      */
     public static final boolean DEFAULT_STRICT_QUOTES = false;
 
     /**
-     * The default leading whitespace behavior to use if none is supplied to the
-     * constructor
+     * The default leading whitespace behavior to use (do ignore
+     * leading whitespace).
      */
     public static final boolean DEFAULT_IGNORE_LEADING_WHITESPACE = true;
 
     /**
-     * I.E. if the quote character is set to null then there is no quote character.
+     * The default quotation behavior (not ignored).
      */
     public static final boolean DEFAULT_IGNORE_QUOTATIONS = false;
 
     /**
-     * This is the "null" character - if a value is set to this then it is ignored.
+     * The "null" character - if a value is set to this then it is ignored.
      */
-    static final char NULL_CHARACTER = '\0';
+    public static final char NULL_CHARACTER = '\0';
 
     /**
-     * Constructs CSVParser using a comma for the separator.
+     * Constructs CSVParser using the default settings.
      */
     public CSVParser() {
-        this(DEFAULT_SEPARATOR, DEFAULT_QUOTE_CHARACTER, DEFAULT_ESCAPE_CHARACTER);
+        this(DEFAULT_SEPARATOR);
     }
 
     /**
@@ -99,12 +88,11 @@ public class CSVParser {
      * @param separator the delimiter to use for separating entries.
      */
     public CSVParser(char separator) {
-        this(separator, DEFAULT_QUOTE_CHARACTER, DEFAULT_ESCAPE_CHARACTER);
+        this(separator, DEFAULT_QUOTE_CHARACTER);
     }
 
-
     /**
-     * Constructs CSVParser with supplied separator and quote char.
+     * Constructs CSVParser with supplied separator and quote character.
      *
      * @param separator the delimiter to use for separating entries
      * @param quoteChar the character to use for quoted elements
@@ -114,7 +102,8 @@ public class CSVParser {
     }
 
     /**
-     * Constructs CSVReader with supplied separator and quote char.
+     * Constructs CSVReader with supplied separator, quote character,
+     * and escape character.
      *
      * @param separator the delimiter to use for separating entries
      * @param quoteChar the character to use for quoted elements
@@ -125,8 +114,8 @@ public class CSVParser {
     }
 
     /**
-     * Constructs CSVParser with supplied separator and quote char.
-     * Allows setting the "strict quotes" flag
+     * Constructs CSVParser with supplied separator, quote character,
+     * escape character, and strict quote behavior.
      *
      * @param separator    the delimiter to use for separating entries
      * @param quoteChar    the character to use for quoted elements
@@ -138,8 +127,9 @@ public class CSVParser {
     }
 
     /**
-     * Constructs CSVParser with supplied separator and quote char.
-     * Allows setting the "strict quotes" and "ignore leading whitespace" flags
+     * Constructs CSVParser with supplied separator, quote character,
+     * escape character, strict quote behavior, and leading whitespace
+     * behavior.
      *
      * @param separator               the delimiter to use for separating entries
      * @param quoteChar               the character to use for quoted elements
@@ -152,8 +142,9 @@ public class CSVParser {
     }
 
     /**
-     * Constructs CSVParser with supplied separator and quote char.
-     * Allows setting the "strict quotes" and "ignore leading whitespace" flags
+     * Constructs CSVParser with supplied separator, quote character,
+     * escape character, strict quote behavior, leading whitespace behavior,
+     * and quotation mark behavior.
      *
      * @param separator               the delimiter to use for separating entries
      * @param quoteChar               the character to use for quoted elements
@@ -187,16 +178,32 @@ public class CSVParser {
     }
 
     /**
-     * @return true if something was left over from last call(s)
+     * Determine if any data was leftover from the last call(s).
+     *
+     * @return true if something was left over.
      */
     public boolean isPending() {
         return pending != null;
     }
 
+    /**
+     * Parses a multiline string of text and produces an array of elements.
+     *
+     * @param nextLine The next line to read
+     * @return The tokenized list of elements or null if nextLine is null.
+     * @throws IOException if an error occurs while parsing the lines.
+     */
     public String[] parseLineMulti(String nextLine) throws IOException {
         return parseLine(nextLine, true);
     }
 
+    /**
+     * Parses a single line of text and produces an array of elements.
+     *
+     * @param nextLine The next line to read
+     * @return The tokenized list of elements or null if nextLine is null.
+     * @throws IOException if an error occurs while parsing the lines.
+     */
     public String[] parseLine(String nextLine) throws IOException {
         return parseLine(nextLine, false);
     }
@@ -296,7 +303,11 @@ public class CSVParser {
     }
 
     /**
-     * precondition: the current character is a quote or an escape
+     * Determines whether the next character is a quotation mark that should be
+     * included verbatim in the line. This means that we are looking at the
+     * sequence {@code \"}.
+     *
+     * Precondition: the current character is a quote or an escape.
      *
      * @param nextLine the current line
      * @param inQuotes true if the current context is quoted
@@ -310,26 +321,32 @@ public class CSVParser {
     }
 
     /**
-     * precondition: the current character is an escape
+     * Determines whether the next character is an escapable character. This
+     * means that it is either a {@code \"} or {@code \\} sequence of
+     * characters.
+     *
+     * Precondition: the current character is an escape.
      *
      * @param nextLine the current line
      * @param inQuotes true if the current context is quoted
      * @param i        current index in line
-     * @return true if the following character is a quote
+     * @return true if the following character is escapable.
      */
-    protected boolean isNextCharacterEscapable(String nextLine, boolean inQuotes, int i) {
+    private boolean isNextCharacterEscapable(String nextLine, boolean inQuotes, int i) {
         return inQuotes  // we are in quotes, therefore there can be escaped quotes in here.
                 && nextLine.length() > (i + 1)  // there is indeed another character to check.
                 && (nextLine.charAt(i + 1) == quoteChar || nextLine.charAt(i + 1) == this.escape);
     }
 
     /**
-     * precondition: sb.length() &gt; 0
+     * Determines whether the current sequence of characters is all whitespace.
+     *
+     * Precondition: sb.length() &gt; 0
      *
      * @param sb A sequence of characters to examine
      * @return true if every character in the sequence is whitespace
      */
-    protected boolean isAllWhiteSpace(CharSequence sb) {
+    private boolean isAllWhiteSpace(CharSequence sb) {
         boolean result = true;
         for (int i = 0; i < sb.length(); i++) {
             char c = sb.charAt(i);
