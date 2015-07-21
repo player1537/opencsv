@@ -28,7 +28,7 @@ public interface MappingStrategy<T> {
     /**
      * Implementation will have to return a property descriptor from a bean based on the current column.
      * @param col the column to find the description for
-     * @throws java.beans.IntrospectionException
+     * @throws java.beans.IntrospectionException if unable to resolve property
      * @return the related PropertyDescriptor
      */
     public abstract PropertyDescriptor findDescriptor(int col) throws IntrospectionException;

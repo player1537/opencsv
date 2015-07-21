@@ -17,7 +17,7 @@ package au.com.bytecode.opencsv;
 
 /**
  * Builder for creating a CSVParser.
- * <p/>
+ * <br>
  * <code>
  * final CSVParser parser =
  * new CSVParserBuilder()

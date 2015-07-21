@@ -160,6 +160,7 @@ public class CSVParser {
      * @param escape                  the character to use for escaping a separator or quote
      * @param strictQuotes            if true, characters outside the quotes are ignored
      * @param ignoreLeadingWhiteSpace if true, white space in front of a quote in a field is ignored
+     * @param ignoreQuotations        if true, quotation marks should be ignored
      */
     public CSVParser(char separator, char quoteChar, char escape, boolean strictQuotes, boolean ignoreLeadingWhiteSpace,
                      boolean ignoreQuotations) {
@@ -323,7 +324,7 @@ public class CSVParser {
     }
 
     /**
-     * precondition: sb.length() > 0
+     * precondition: sb.length() &gt; 0
      *
      * @param sb A sequence of characters to examine
      * @return true if every character in the sequence is whitespace
