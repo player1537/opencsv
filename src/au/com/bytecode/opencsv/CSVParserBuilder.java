@@ -18,13 +18,14 @@ package au.com.bytecode.opencsv;
 /**
  * Builder for creating a CSVParser.
  * <br>
- * <code>
- * final CSVParser parser =
- * new CSVParserBuilder()
- * .withSeparator('\t')
- * .withIgnoreQuotations(true)
- * .build();
- * </code>
+ * <pre>
+ * {@code
+ * final CSVParser parser = new CSVParserBuilder()
+ *     .withSeparator('\t')
+ *     .withIgnoreQuotations(true)
+ *     .build();
+ * }
+ * </pre>
  *
  * @see CSVParser
  */
@@ -35,16 +36,16 @@ public class CSVParserBuilder {
     char escapeChar = CSVParser.DEFAULT_ESCAPE_CHARACTER;
     boolean strictQuotes = CSVParser.DEFAULT_STRICT_QUOTES;
 
-    boolean ignoreLeadingWhiteSpace =
-            CSVParser.DEFAULT_IGNORE_LEADING_WHITESPACE;
+    boolean ignoreLeadingWhiteSpace = CSVParser.DEFAULT_IGNORE_LEADING_WHITESPACE;
     boolean ignoreQuotations = CSVParser.DEFAULT_IGNORE_QUOTATIONS;
 
     /**
      * Sets the delimiter to use for separating entries
      *
      * @param separator the delimiter to use for separating entries
+     * @return this (for method chaining)
      */
-    CSVParserBuilder withSeparator(final char separator) {
+    public CSVParserBuilder withSeparator(final char separator) {
         this.separator = separator;
         return this;
     }
@@ -53,9 +54,10 @@ public class CSVParserBuilder {
     /**
      * Sets the character to use for quoted elements
      *
-     * @param quotechar the character to use for quoted elements
+     * @param quoteChar the character to use for quoted elements
+     * @return this (for method chaining)
      */
-    CSVParserBuilder withQuoteChar(final char quoteChar) {
+    public CSVParserBuilder withQuoteChar(final char quoteChar) {
         this.quoteChar = quoteChar;
         return this;
     }
@@ -64,9 +66,10 @@ public class CSVParserBuilder {
     /**
      * Sets the character to use for escaping a separator or quote
      *
-     * @param escape the character to use for escaping a separator or quote
+     * @param escapeChar the character to use for escaping a separator or quote
+     * @return this (for method chaining)
      */
-    CSVParserBuilder withEscapeChar(final char escapeChar) {
+    public CSVParserBuilder withEscapeChar(final char escapeChar) {
         this.escapeChar = escapeChar;
         return this;
     }
@@ -77,8 +80,9 @@ public class CSVParserBuilder {
      * outside the quotes are ignored
      *
      * @param strictQuotes if true, characters outside the quotes are ignored
+     * @return this (for method chaining)
      */
-    CSVParserBuilder withStrictQuotes(final boolean strictQuotes) {
+    public CSVParserBuilder withStrictQuotes(final boolean strictQuotes) {
         this.strictQuotes = strictQuotes;
         return this;
     }
@@ -88,8 +92,9 @@ public class CSVParserBuilder {
      * in front of a quote in a field is ignored
      *
      * @param ignoreLeadingWhiteSpace if true, white space in front of a quote in a field is ignored
+     * @return this (for method chaining)
      */
-    CSVParserBuilder withIgnoreLeadingWhiteSpace(final boolean ignoreLeadingWhiteSpace) {
+    public CSVParserBuilder withIgnoreLeadingWhiteSpace(final boolean ignoreLeadingWhiteSpace) {
         this.ignoreLeadingWhiteSpace = ignoreLeadingWhiteSpace;
         return this;
     }
@@ -98,16 +103,19 @@ public class CSVParserBuilder {
      * Sets the ignore quotations mode - if true, quotations are ignored
      *
      * @param ignoreQuotations if true, quotations are ignored
+     * @return this (for method chaining)
      */
-    CSVParserBuilder withIgnoreQuotations(final boolean ignoreQuotations) {
+    public CSVParserBuilder withIgnoreQuotations(final boolean ignoreQuotations) {
         this.ignoreQuotations = ignoreQuotations;
         return this;
     }
 
     /**
      * Constructs CSVParser
+     *
+     * @return A parser with the specified settings
      */
-    CSVParser build() {
+    public CSVParser build() {
         return new CSVParser(
                 separator,
                 quoteChar,
